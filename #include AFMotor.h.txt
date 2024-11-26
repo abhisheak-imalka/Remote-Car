@@ -1,0 +1,41 @@
+#include <AFMotor.h>
+
+AF_DCMotor motor1(1, MOTOR12_1KHZ);  // Left Wheel Motor
+AF_DCMotor motor4(4, MOTOR34_1KHZ);  // Right Wheel Motor
+AF_DCMotor turnMotor(2, MOTOR12_1KHZ);  // Motor for turning right and left
+
+char value;
+void setup() {
+  Serial.begin(9600);
+  
+  motor1.setSpeed(240);
+  motor4.setSpeed(240);
+  turnMotor.setSpeed(240);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    value = Serial.read();
+  }
+
+  if (value == 'F') {  // Move forward
+    motor4.run(FORWARD);
+    motor1.run(FORWARD);
+  } else if (value == 'B') {  // Move backward
+    motor4.run(BACKWARD);
+    motor1.run(BACKWARD);
+  } else if (value == 'R') {  // Turn right
+    turnMotor.run(FORWARD);
+    delay(500);  // Adjust delay as needed for turning time
+    turnMotor.run(RELEASE);
+  } else if (value == 'L') {  // Turn left
+    turnMotor.run(BACKWARD);
+    delay(500);  // Adjust delay as needed for turning time
+    turnMotor.run(RELEASE);
+  } else {
+    // Stop all motors
+    motor4.run(RELEASE);
+    motor1.run(RELEASE);
+    turnMotor.run(RELEASE);
+  }
+}
